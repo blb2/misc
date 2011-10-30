@@ -2,8 +2,9 @@
 
 use strict;
 
-my $s = "abcd";
-my @a = split(//, lc $s);
+exit if @ARGV == 0;
+
+my @a = split(//, lc $ARGV[0]);
 my @p = reverse map { 2**$_ } 0 .. $#a;
 
 foreach my $i (0 .. 2**@a - 1)
