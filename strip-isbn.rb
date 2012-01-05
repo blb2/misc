@@ -18,12 +18,12 @@ ARGV.each do |argv|
 		#   Timestamp
 		#   Formatted version of timestamp
 
-		text   = row[1]
-		format = row[2]
+		text = row[1]
+		fmt  = row[2]
 
 		# TODO: Convert UPC to ISBN -- yuck!
 
-		if format.match(/^EAN/) and text.match(/^978/)
+		if fmt.match(/^EAN/) and text.match(/^978/)
 			puts text
 		end
 	end
