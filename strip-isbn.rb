@@ -1,24 +1,30 @@
 #!/usr/bin/env ruby
-# After I export a CSV file from the Android app, Book Catalogue, I wanted to
-# import this list into Google Books.  Unfortunately, Google Books only
-# accepts a list of ISBN or ISSN entries, so I made this script to transform
-# the original CSV file into just a list of each book's ISBN.
+# Dumps out only the ISBN field from the CSV file produced by by the Android
+# app, ZXing Barcode Scanner.
 #
-# Sample usage: strip-isbn.rb > isbns.txt
+# Sample usage: strip-isbn.rb history-*.csv > isbn.txt
 
 require "csv"
 
-isbn_pos = -1
+ARGV.each do |argv|
+	CSV.open argv, 'r' do |row|
+		# The CSV field information were taken from
+		#   zxing\android\src\com\google\zxing\client\android\history\HistoryManager.java
+		#   buildHistory()
+		# The following is a listing of each of the fields:
+		#   Raw text
+		#   Display text
+		#   Format (e.g. QR_CODE)
+		#   Timestamp
+		#   Formatted version of timestamp
 
-CSV.open('export.csv', 'r') do |row|
-	if isbn_pos < 0
-		row.each_index do |i|
-			isbn_pos = i if row[i] == "isbn"
+		text   = row[1]
+		format = row[2]
+
+		# TODO: Convert UPC to ISBN -- yuck!
+
+		if format.match(/^EAN/) and text.match(/^978/)
+			puts text
 		end
-
-		break if isbn_pos < 0
-		next
 	end
-
-	puts row[isbn_pos]
 end
