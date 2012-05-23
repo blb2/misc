@@ -5,9 +5,9 @@ shopt -s extglob
 BASE=$(pwd)
 TOOLS=
 
-type -P hg  &> /dev/null && TOOLS="hg  $TOOLS"
-type -P svn &> /dev/null && TOOLS="svn $TOOLS"
-type -P git &> /dev/null && TOOLS="git $TOOLS"
+type -p hg  &> /dev/null && TOOLS="hg  $TOOLS"
+type -p svn &> /dev/null && TOOLS="svn $TOOLS"
+type -p git &> /dev/null && TOOLS="git $TOOLS"
 
 function update
 {
