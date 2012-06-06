@@ -33,8 +33,8 @@ function update
 						svn update
 						;;
 					'hg')
-						echo "hg update ${DIR}${PROJ} ..."
-						hg update
+						echo "hg pull -u ${DIR}${PROJ} ..."
+						hg pull -u
 						;;
 				esac
 
