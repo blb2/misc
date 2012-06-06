@@ -5,6 +5,7 @@ shopt -s extglob
 BASE=$(pwd)
 TOOLS=
 
+type -p bzr &> /dev/null && TOOLS="bzr $TOOLS"
 type -p hg  &> /dev/null && TOOLS="hg  $TOOLS"
 type -p svn &> /dev/null && TOOLS="svn $TOOLS"
 type -p git &> /dev/null && TOOLS="git $TOOLS"
@@ -35,6 +36,10 @@ function update
 					'hg')
 						echo "hg pull -u ${DIR}${PROJ} ..."
 						hg pull -u
+						;;
+					'bzr')
+						echo "bzr update ${DIR}${PROJ} ..."
+						bzr update
 						;;
 				esac
 
