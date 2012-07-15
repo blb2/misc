@@ -17,39 +17,39 @@ function get_absolute_path
 	popd > /dev/null
 }
 
+function get_relative_path
+{
+	echo ${1/#$BASE_DIR*(\/)/}
+}
+
 function has_repos
 {
 	[ -d "$1" -a "$1" != "${1/%repos-*([^\/])/}" ]
 }
 
-function printable_dir
-{
-	echo ${1/#$BASE_DIR*(\/)/}
-}
-
 function update_repo
 {
 	local DIR="$1"
-	local DIRP=$(printable_dir "$DIR")
+	local RDIR=$(get_relative_path "$DIR")
 	pushd "$DIR" > /dev/null
 
 	for TYPE in $SCM; do
 		if [ -d ".${TYPE}" ]; then
 			case "$TYPE" in
 				'git')
-					echo "git pull ${DIRP} ..."
+					echo "git pull ${RDIR} ..."
 					git pull
 					;;
 				'svn')
-					echo "svn update ${DIRP} ..."
+					echo "svn update ${RDIR} ..."
 					svn update
 					;;
 				'hg')
-					echo "hg pull -u ${DIRP} ..."
+					echo "hg pull -u ${RDIR} ..."
 					hg pull -u
 					;;
 				'bzr')
-					echo "bzr update ${DIRP} ..."
+					echo "bzr update ${RDIR} ..."
 					bzr update
 					;;
 			esac
@@ -64,7 +64,7 @@ function update_repo
 function get_repo_url
 {
 	local DIR="$1"
-	local DIRP=$(printable_dir "$DIR")
+	local RDIR=$(get_relative_path "$DIR")
 	pushd "$DIR" > /dev/null
 
 	for TYPE in $SCM; do
@@ -86,7 +86,7 @@ function get_repo_url
 					;;
 			esac
 
-			[ ! -z "$URL" ] && printf "%-3s %s\n%4s%s\n" "$TYPE" "$DIRP" "" "$URL"
+			[ ! -z "$URL" ] && printf "%-3s %s\n%4s%s\n" "$TYPE" "$RDIR" "" "$URL"
 
 			break
 		fi
