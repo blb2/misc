@@ -37,19 +37,20 @@ function update_repo
 		if [ -d ".${TYPE}" ]; then
 			case "$TYPE" in
 				'git')
-					echo "git pull ${RDIR} ..."
-					git pull
+					echo "git ${RDIR} ..."
+					git remote update
+					git merge origin/master
 					;;
 				'svn')
-					echo "svn update ${RDIR} ..."
+					echo "svn ${RDIR} ..."
 					svn update
 					;;
 				'hg')
-					echo "hg pull -u ${RDIR} ..."
+					echo "hg  ${RDIR} ..."
 					hg pull -u
 					;;
 				'bzr')
-					echo "bzr update ${RDIR} ..."
+					echo "bzr ${RDIR} ..."
 					bzr update
 					;;
 			esac
@@ -86,7 +87,7 @@ function get_repo_url
 					;;
 			esac
 
-			[ ! -z "$URL" ] && printf "%-3s %s\n%4s%s\n" "$TYPE" "$RDIR" "" "$URL"
+			[ ! -z "$URL" ] && printf "%-3s %s %s\n" "$TYPE" "$RDIR" "$URL"
 
 			break
 		fi
