@@ -27,6 +27,11 @@ function has_repos
 	[ -d "$1" -a "$1" != "${1/%repos-*([^\/])/}" ]
 }
 
+function get_git_branch_name
+{
+	git symbolic-ref -q --short HEAD
+}
+
 function update_repo
 {
 	local DIR="$1"
@@ -39,7 +44,7 @@ function update_repo
 				'git')
 					echo "git ${RDIR} ..."
 					git fetch --all --prune
-					git merge FETCH_HEAD
+					git merge "origin/$(get_git_branch_name)"
 					;;
 				'svn')
 					echo "svn ${RDIR} ..."
