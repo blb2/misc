@@ -38,8 +38,8 @@ function update_repo
 			case "$TYPE" in
 				'git')
 					echo "git ${RDIR} ..."
-					git remote update
-					git merge origin/master
+					git remote update --prune
+					git merge FETCH_HEAD
 					;;
 				'svn')
 					echo "svn ${RDIR} ..."
