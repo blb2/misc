@@ -38,7 +38,7 @@ function update_repo
 			case "$TYPE" in
 				'git')
 					echo "git ${RDIR} ..."
-					git remote update --prune
+					git fetch --all --prune
 					git merge FETCH_HEAD
 					;;
 				'svn')
