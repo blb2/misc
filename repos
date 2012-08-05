@@ -46,7 +46,7 @@ function update_repo
 					svn update
 					;;
 				'hg')
-					echo "hg  ${RDIR} ..."
+					echo "hg ${RDIR} ..."
 					hg pull -u
 					;;
 				'bzr')
