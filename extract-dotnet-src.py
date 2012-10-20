@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import platform
 import os
 import re
@@ -9,6 +10,7 @@ import sys
 
 is_windows = (platform.system() == 'Windows')
 windows_unicode_path_prefix = '\\\\?\\'
+
 
 def fix_windows_path(path):
     if is_windows and len(path) >= 260 and not path.startswith(windows_unicode_path_prefix):
@@ -98,16 +100,22 @@ def copy_files(paths, dst_root_dir):
                 copy_file(src_path, dst_path)
 
 
-for filename in sys.argv[1:]:
-    paths = get_paths(filename)
-    if paths:
-        dst_root_dir = os.path.splitext(os.path.basename(filename))[0]
-        if os.path.exists(dst_root_dir):
-            ret = raw_input('Destination directory exists: ' + dst_root_dir + '\nContinue? (y/n): ')
-            if ret != 'y':
-                continue
-        copy_files(paths, dst_root_dir)
-    else:
-        print >> sys.stderr, filename, 'does not contain any valid paths'
+def process_files(files):
+    for filename in files:
+        paths = get_paths(filename)
+        if paths:
+            dst_root_dir = os.path.splitext(os.path.basename(filename))[0]
+            if os.path.exists(dst_root_dir):
+                ret = raw_input('Destination directory exists: ' + dst_root_dir + '\nContinue? (y/n): ')
+                if ret != 'y':
+                    continue
+            copy_files(paths, dst_root_dir)
+        else:
+            print >> sys.stderr, filename, 'does not contain any valid paths'
+
+
+if __name__ == "__main__":
+    process_files(sys.argv[1:])
+
 
 # vim: set et ts=4 sw=4:
