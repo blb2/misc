@@ -8,14 +8,14 @@ import shutil
 import sys
 
 
-is_windows = (platform.system() == 'Windows')
-windows_unicode_path_prefix = '\\\\?\\'
+WINDOWS = (platform.system() == 'Windows')
+WINDOWS_PATH_PREFIX = '\\\\?\\'
 
 
 def fix_windows_path(path):
-    if is_windows and len(path) >= 260 and not path.startswith(windows_unicode_path_prefix):
-        return windows_unicode_path_prefix + path
-    return path
+    if not WINDOWS or len(path) < 260 or path.startswith(WINDOWS_PATH_PREFIX):
+        return path
+    return WINDOWS_PATH_PREFIX + path
 
 
 def get_paths(filename):
@@ -31,12 +31,11 @@ def get_paths(filename):
         return []
 
 
-namespace_pattern = re.compile('^namespace\s+([\w\.]+)\s*{*')
 def parse_namespace(path):
     try:
         with open(path, 'r') as f:
             for line in f:
-                match = namespace_pattern.match(line)
+                match = re.match('^namespace\s+([\w\.]+)\s*{*', line)
                 if match:
                     return match.group(1)
     except IOError as e:
