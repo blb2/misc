@@ -35,7 +35,7 @@ def parse_namespace(path):
     try:
         with open(path, 'r') as f:
             for line in f:
-                match = re.match('^namespace\s+([\w\.]+)\s*{*', line)
+                match = re.search('namespace\s+([\w\.]+)\s*{*', re.sub('//.*', '', line))
                 if match:
                     return match.group(1)
     except IOError as e:
@@ -91,7 +91,7 @@ def copy_files(paths, dst_root_dir):
                 namespace = parse_namespace(src_path)
                 if not namespace:
                     print >> sys.stderr, '%s: namespace not found' % src_path
-                    continue
+                    namespace = 'Unknown Namespace'
                 sub_path = os.path.join(namespace.replace('.', os.path.sep), f)
                 dst_path = fix_windows_path(os.path.join(dst_root_dir, sub_path))
                 if gen_level >= 0:
