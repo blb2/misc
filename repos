@@ -101,6 +101,13 @@ function get_repo_url
 	popd > /dev/null
 }
 
+function show_repo_name
+{
+	local DIR="$1"
+	local RDIR=$(get_relative_path "$DIR")
+	echo "$RDIR"
+}
+
 function repo_action
 {
 	local ACTION=$1
@@ -129,6 +136,9 @@ case "$1" in
 		;;
 	'urls')
 		ACTION=get_repo_url
+		;;
+	'names')
+		ACTION=show_repo_name
 		;;
 	*)
 		echo "Invalid action: $1"
