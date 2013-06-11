@@ -3,12 +3,19 @@
 shopt -s extglob
 
 BASE_DIR=$(pwd)
-SCM=
+SCM="git svn hg bzr"
+CMD=
 
-type -p bzr &> /dev/null && SCM="bzr $SCM"
-type -p hg  &> /dev/null && SCM="hg  $SCM"
-type -p svn &> /dev/null && SCM="svn $SCM"
-type -p git &> /dev/null && SCM="git $SCM"
+function cmd_exists
+{
+	local cmd=
+
+	for cmd in $CMD; do
+		[ "$1" = "$cmd" ] && return 0
+	done
+
+	return 1
+}
 
 function get_absolute_path
 {
@@ -19,7 +26,7 @@ function get_absolute_path
 
 function get_relative_path
 {
-	echo ${1/#$BASE_DIR*(\/)/}
+	echo ${1/#${BASE_DIR}*(\/)/}
 }
 
 function has_repos
@@ -34,31 +41,35 @@ function get_git_branch_name
 
 function update_repo
 {
-	local DIR="$1"
-	local RDIR=$(get_relative_path "$DIR")
-	pushd "$DIR" > /dev/null
+	local repo_abs_path="$1"
+	local repo_rel_path=$(get_relative_path "$repo_abs_path")
+	local scm=
 
-	for TYPE in $SCM; do
-		if [ -d ".${TYPE}" ]; then
-			case "$TYPE" in
-				'git')
-					echo "git ${RDIR} ..."
-					git fetch --all --prune
-					git merge "origin/$(get_git_branch_name)"
-					;;
-				'svn')
-					echo "svn ${RDIR} ..."
-					svn update
-					;;
-				'hg')
-					echo "hg ${RDIR} ..."
-					hg pull -u
-					;;
-				'bzr')
-					echo "bzr ${RDIR} ..."
-					bzr update
-					;;
-			esac
+	pushd "$repo_abs_path" > /dev/null
+
+	for scm in $SCM; do
+		if [ -d ".${scm}" ]; then
+			echo "${scm} ${repo_rel_path} ..."
+
+			if cmd_exists "$scm"; then
+				case "$scm" in
+					'git')
+						git fetch --all --prune
+						git merge "origin/$(get_git_branch_name)"
+						;;
+					'svn')
+						svn update
+						;;
+					'hg')
+						hg pull -u
+						;;
+					'bzr')
+						bzr update
+						;;
+				esac
+			else
+				echo "skipped"
+			fi
 
 			break
 		fi
@@ -67,67 +78,83 @@ function update_repo
 	popd > /dev/null
 }
 
-function get_repo_url
+function show_repo_url
 {
-	local DIR="$1"
-	local RDIR=$(get_relative_path "$DIR")
-	pushd "$DIR" > /dev/null
+	local repo_abs_path="$1"
+	local repo_rel_path=$(get_relative_path "$repo_abs_path")
+	local scm=
 
-	for TYPE in $SCM; do
-		if [ -d ".${TYPE}" ]; then
-			local URL=
+	pushd "$repo_abs_path" > /dev/null
 
-			case "$TYPE" in
-				'git')
-					URL=$(git config remote.origin.url)
-					;;
-				'svn')
-					URL=$(svn info | awk '/^URL: / { print $2 }')
-					;;
-				'hg')
-					URL=$(hg showconfig paths.default)
-					;;
-				'bzr')
-					URL=$(bzr config bound_location)
-					;;
-			esac
+	for scm in $SCM; do
+		if [ -d ".${scm}" ]; then
+			local url=
 
-			[ ! -z "$URL" ] && printf "%-3s %s %s\n" "$TYPE" "$RDIR" "$URL"
+			if cmd_exists "$scm"; then
+				case "$scm" in
+					'git')
+						url=$(git config remote.origin.url)
+						;;
+					'svn')
+						url=$(svn info | awk '/^URL: / { print $2 }')
+						;;
+					'hg')
+						url=$(hg showconfig paths.default)
+						;;
+					'bzr')
+						url=$(bzr config bound_location)
+						;;
+				esac
+			else
+				url="---"
+			fi
 
+			[ ! -z "$url" ] && printf "%-3s %s %s\n" "$scm" "$repo_rel_path" "$url"
 			break
 		fi
 	done
 
 	popd > /dev/null
+}
+
+function show_repo_path
+{
+	local repo_abs_path="$1"
+	echo $(get_relative_path "$repo_abs_path")
 }
 
 function show_repo_name
 {
-	local DIR="$1"
-	local RDIR=$(get_relative_path "$DIR")
-	echo "$RDIR"
+	local repo_abs_path="$1"
+	echo $(basename "$repo_abs_path")
 }
 
 function repo_action
 {
-	local ACTION=$1
-	local DIR="$2"
-	pushd "$DIR" > /dev/null
+	local action=$1
+	local curr_abs_dir="$2"
 
-	for FILE in `ls`; do
-		[ ! -d "$FILE" ] && continue
+	pushd "$curr_abs_dir" > /dev/null
 
-		local PROJ_DIR="${DIR}/${FILE}"
+	local file=
+	for file in `ls`; do
+		[ ! -d "$file" ] && continue
 
-		if has_repos "$PROJ_DIR"; then
-			repo_action $ACTION "$PROJ_DIR"
+		local repo_abs_dir="${curr_abs_dir}/${file}"
+
+		if has_repos "$repo_abs_dir"; then
+			repo_action $action "$repo_abs_dir"
 		else
-			$ACTION "$PROJ_DIR"
+			$action "$repo_abs_dir"
 		fi
 	done
 
 	popd > /dev/null
 }
+
+for scm in $SCM; do
+	type -p "$scm" &> /dev/null && CMD="$scm $CMD"
+done
 
 ACTION=
 case "$1" in
@@ -135,7 +162,10 @@ case "$1" in
 		ACTION=update_repo
 		;;
 	'urls')
-		ACTION=get_repo_url
+		ACTION=show_repo_url
+		;;
+	'paths')
+		ACTION=show_repo_path
 		;;
 	'names')
 		ACTION=show_repo_name
