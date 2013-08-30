@@ -2,7 +2,7 @@
 rem Batch scripting reference:
 rem http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/batch.mspx
 
-set DIR_NAMES=bin obj x86 x64 Debug Release Build
+set DIR_NAMES=bin obj x86 x64 Debug Release Build ipch
 
 echo User files to remove:
 dir /s /b /ah *.suo  2> nul
