@@ -3,7 +3,7 @@
 shopt -s extglob
 
 BASE_DIR=$(pwd)
-SCM="git svn hg bzr"
+SCM="git svn hg bzr cvs"
 CMD=
 
 function cmd_exists
@@ -48,7 +48,7 @@ function update_repo
 	pushd "$repo_abs_path" > /dev/null
 
 	for scm in $SCM; do
-		if [ -d ".${scm}" ]; then
+		if [ -d ".${scm}" -o \( "$scm" = "cvs" -a -d "CVS" \) ]; then
 			echo "${scm} ${repo_rel_path} ..."
 
 			if cmd_exists "$scm"; then
@@ -65,6 +65,9 @@ function update_repo
 						;;
 					'bzr')
 						bzr update
+						;;
+					'cvs')
+						cvs update
 						;;
 				esac
 			else
@@ -87,7 +90,7 @@ function show_repo_url
 	pushd "$repo_abs_path" > /dev/null
 
 	for scm in $SCM; do
-		if [ -d ".${scm}" ]; then
+		if [ -d ".${scm}" -o \( "$scm" = "cvs" -a -d "CVS" \) ]; then
 			local url=
 
 			if cmd_exists "$scm"; then
@@ -103,6 +106,9 @@ function show_repo_url
 						;;
 					'bzr')
 						url=$(bzr config bound_location)
+						;;
+					'cvs')
+						url=$(cat CVS/Root)
 						;;
 				esac
 			else
