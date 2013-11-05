@@ -2,6 +2,7 @@
 rem Batch scripting reference:
 rem http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/batch.mspx
 
+set PAUSE=%~1
 set DIR_NAMES=bin obj ipch
 
 echo Removing user files:
@@ -24,4 +25,4 @@ for /f "usebackq delims=" %%d in (`dir /ad /b /s ^| sort /r`) do (
 	)
 )
 
-pause
+if "%PAUSE%"=="" pause
