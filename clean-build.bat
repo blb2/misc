@@ -7,6 +7,7 @@ set DIR_NAMES=bin obj ipch
 
 echo Removing user files:
 erase /s /q /ah *.suo  2> nul
+erase /s /q     *.suo  2> nul
 erase /s /q     *.user 2> nul
 
 echo Removing intellisense files:

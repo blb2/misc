@@ -7,6 +7,7 @@ set DIR_NAMES=bin obj ipch
 
 echo User files to remove:
 dir /s /b /ah *.suo  2> nul
+dir /s /b     *.suo  2> nul
 dir /s /b     *.user 2> nul
 
 echo Intellisense files to remove:
