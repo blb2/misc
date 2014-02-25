@@ -22,7 +22,6 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Compile Include="extract-dotnet-src.py" />
     <Compile Include="nd-filter.py" />
     <Compile Include="sieve.py" />
   </ItemGroup>
