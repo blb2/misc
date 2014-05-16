@@ -81,6 +81,44 @@ function update_repo
 	popd > /dev/null
 }
 
+function clean_repo
+{
+	local repo_abs_path="$1"
+	local repo_rel_path=$(get_relative_path "$repo_abs_path")
+	local scm=
+
+	pushd "$repo_abs_path" > /dev/null
+
+	for scm in $SCM; do
+		if [ -d ".${scm}" -o \( "$scm" = "cvs" -a -d "CVS" \) ]; then
+			if cmd_exists "$scm"; then
+				case "$scm" in
+					'git')
+						printf "%-3s gc %s\n" "$scm" "$repo_rel_path"
+						git gc
+						;;
+					'svn')
+						if svn status --depth empty | grep L &> /dev/null; then
+							printf "%-3s cleanup %s\n" "$scm" "$repo_rel_path"
+							svn cleanup
+						fi
+						;;
+					'hg')
+						;;
+					'bzr')
+						;;
+					'cvs')
+						;;
+				esac
+			fi
+
+			break
+		fi
+	done
+
+	popd > /dev/null
+}
+
 function show_repo_url
 {
 	local repo_abs_path="$1"
@@ -166,6 +204,9 @@ ACTION=
 case "$1" in
 	'update')
 		ACTION=update_repo
+		;;
+	'clean')
+		ACTION=clean_repo
 		;;
 	'urls')
 		ACTION=show_repo_url
