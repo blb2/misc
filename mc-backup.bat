@@ -4,7 +4,7 @@ rem http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-
 
 set SZ=%PROGRAMFILES%\7-Zip\7z.exe
 set SRC=%APPDATA%\.minecraft\saves
-set DST=%USERPROFILE%\Desktop\Minecraft Backups
+set DST=%USERPROFILE%\Desktop\Minecraft
 set DSTNAME=Backup
 set DSTEXT=7z
 
