@@ -12,6 +12,7 @@ erase /s /q     *.user 2> nul
 
 echo Removing intellisense files:
 erase /s /q *.ncb *.sdf 2> nul
+erase /s /q *.aps       2> nul
 
 echo Removing backup files:
 erase /s /q *~ 2> nul

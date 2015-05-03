@@ -12,6 +12,7 @@ dir /s /b     *.user 2> nul
 
 echo Intellisense files to remove:
 dir /s /b *.ncb *.sdf 2> nul
+dir /s /b *.aps       2> nul
 
 echo Backup files to remove:
 dir /s /b *~ 2> nul
