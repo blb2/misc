@@ -55,7 +55,7 @@ function update_repo
 				case "$scm" in
 					'git')
 						git fetch --all --prune
-						git merge "origin/$(get_git_branch_name)"
+						git merge --ff-only "origin/$(get_git_branch_name)"
 						if [ -e ".gitmodules" ]; then
 							git submodule update --init --remote --recursive
 						fi
