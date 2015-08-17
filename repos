@@ -57,7 +57,7 @@ function update_repo
 						git fetch --all --prune
 						git merge --ff-only "origin/$(get_git_branch_name)"
 						if [ -e ".gitmodules" ]; then
-							git submodule update --init --remote --recursive
+							git submodule update --init --recursive
 						fi
 						;;
 					'svn')
