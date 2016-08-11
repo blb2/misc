@@ -15,7 +15,7 @@ Testing out enumerating different character case combinations in Perl.
 	7 ABC
 
 ### [clean-build-dryrun.bat](batch/clean-build-dryrun.bat) / [clean-build.bat](batch/clean-build.bat)
-For mine projects that are not in some kind of source control yet, I needed some
+For my projects that are not in some kind of source control yet, I needed some
 way to uniformly clean out files that were temporary or from the build.  The
 `dryrun` version just prints out what the regular script would do without
 actually doing it.
