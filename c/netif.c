@@ -11,14 +11,11 @@
 int main(void)
 {
 	struct if_nameindex* p_ifs = if_nameindex();
-	if (p_ifs)
-	{
+	if (p_ifs) {
 		int s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-		if (s >= 0)
-		{
+		if (s >= 0) {
 			int i;
-			for (i = 0; p_ifs[i].if_index != 0 && p_ifs[i].if_name; i++)
-			{
+			for (i = 0; p_ifs[i].if_index != 0 && p_ifs[i].if_name; i++) {
 				char ip[INET_ADDRSTRLEN] = "?";
 
 				struct ifreq req;

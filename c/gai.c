@@ -14,12 +14,10 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 	puts(header);
 
 	int addr_num = 0;
-	for (struct addrinfo* curr = addr; curr; curr = curr->ai_next, addr_num++)
-	{
+	for (struct addrinfo* curr = addr; curr; curr = curr->ai_next, addr_num++) {
 		printf("addr[%d]:\n", addr_num);
 
-		puts(" flags:");
-		{
+		puts(" flags:"); {
 			if ((curr->ai_flags & AI_PASSIVE) != 0)
 				printf("  AI_PASSIVE\n");
 			if ((curr->ai_flags & AI_CANONNAME) != 0)
@@ -34,112 +32,101 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  AI_ADDRCONFIG\n");
 		}
 
-		puts(" family:");
-		{
+		puts(" family:"); {
 			const char* family;
-			switch (curr->ai_family)
-			{
-				case AF_INET:
-					family = "ipv4";
-					break;
-				case AF_INET6:
-					family = "ipv6";
-					break;
-				case AF_UNIX:
-					family = "unix";
-					break;
-				default:
-					family = NULL;
+			switch (curr->ai_family) {
+			case AF_INET:
+				family = "ipv4";
+				break;
+			case AF_INET6:
+				family = "ipv6";
+				break;
+			case AF_UNIX:
+				family = "unix";
+				break;
+			default:
+				family = NULL;
 			}
 
 			if (family)
 				printf("  %s\n", family);
 		}
 
-		puts(" socktype:");
-		{
+		puts(" socktype:"); {
 			const char* type;
-			switch (curr->ai_socktype)
-			{
-				case SOCK_STREAM:
-					type = "stream";
-					break;
-				case SOCK_DGRAM:
-					type = "datagram";
-					break;
-				case SOCK_RAW:
-					type = "raw";
-					break;
-				case SOCK_SEQPACKET:
-					type = "seqpacket";
-					break;
-				default:
-					type = NULL;
+			switch (curr->ai_socktype) {
+			case SOCK_STREAM:
+				type = "stream";
+				break;
+			case SOCK_DGRAM:
+				type = "datagram";
+				break;
+			case SOCK_RAW:
+				type = "raw";
+				break;
+			case SOCK_SEQPACKET:
+				type = "seqpacket";
+				break;
+			default:
+				type = NULL;
 			}
 
 			if (type)
 				printf("  %s\n", type);
 		}
 
-		puts(" protocol:");
-		{
+		puts(" protocol:"); {
 			const char* protocol;
-			switch (curr->ai_protocol)
-			{
-				case IPPROTO_TCP:
-					protocol = "tcp";
-					break;
-				case IPPROTO_UDP:
-					protocol = "udp";
-					break;
-				case IPPROTO_RAW:
-					protocol = "raw";
-					break;
-				case IPPROTO_IP:
-					protocol = "ip";
-					break;
-				case IPPROTO_IPV6:
-					protocol = "ipv6";
-					break;
-				case IPPROTO_ICMP:
-					protocol = "icmp";
-					break;
-				default:
-					protocol = NULL;
+			switch (curr->ai_protocol) {
+			case IPPROTO_TCP:
+				protocol = "tcp";
+				break;
+			case IPPROTO_UDP:
+				protocol = "udp";
+				break;
+			case IPPROTO_RAW:
+				protocol = "raw";
+				break;
+			case IPPROTO_IP:
+				protocol = "ip";
+				break;
+			case IPPROTO_IPV6:
+				protocol = "ipv6";
+				break;
+			case IPPROTO_ICMP:
+				protocol = "icmp";
+				break;
+			default:
+				protocol = NULL;
 			}
 
 			if (protocol)
 				printf("  %s\n", protocol);
 		}
 
-		puts(" canonical:");
-		{
+		puts(" canonical:"); {
 			if (curr->ai_canonname)
 				printf("  %s\n", curr->ai_canonname);
 		}
 
-		puts(" addr:");
-		{
-			switch (curr->ai_family)
-			{
-				case AF_INET:
-				{
-					struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;
-					assert(s->sin_family == curr->ai_family);
-					printf("  family: %d\n", s->sin_family);
-					printf("  addr: %s\n", inet_ntop(s->sin_family, &s->sin_addr, ipv4, sizeof(ipv4)));
-					printf("  port: %d\n", ntohs(s->sin_port));
-					break;
-				}
-				case AF_INET6:
-				{
-					struct sockaddr_in6* s = (struct sockaddr_in6*)curr->ai_addr;
-					assert(s->sin6_family == curr->ai_family);
-					printf("  family: %d\n", s->sin6_family);
-					printf("  addr: %s\n", inet_ntop(s->sin6_family, &s->sin6_addr, ipv6, sizeof(ipv6)));
-					printf("  port: %d\n", ntohs(s->sin6_port));
-					break;
-				}
+		puts(" addr:"); {
+			switch (curr->ai_family) {
+			case AF_INET: {
+				struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;
+				assert(s->sin_family == curr->ai_family);
+				printf("  family: %d\n", s->sin_family);
+				printf("  addr: %s\n", inet_ntop(s->sin_family, &s->sin_addr, ipv4, sizeof(ipv4)));
+				printf("  port: %d\n", ntohs(s->sin_port));
+				break;
+			}
+			case AF_INET6: {
+				struct sockaddr_in6* s = (struct sockaddr_in6*)curr->ai_addr;
+				assert(s->sin6_family == curr->ai_family);
+				printf("  family: %d\n", s->sin6_family);
+				printf("  addr: %s\n", inet_ntop(s->sin6_family, &s->sin6_addr, ipv6, sizeof(ipv6)));
+				printf("  port: %d\n", ntohs(s->sin6_port));
+				break;
+			}
 			}
 		}
 
@@ -160,8 +147,7 @@ int main(void)
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if (getaddrinfo(NULL, "80", &hints, &addr) == 0)
-	{
+	if (getaddrinfo(NULL, "80", &hints, &addr) == 0) {
 		showaddrinfo(addr, "NULL + 80");
 		freeaddrinfo(addr);
 	}
@@ -169,8 +155,7 @@ int main(void)
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_flags = AI_CANONNAME;
 
-	if (getaddrinfo("heapify.org", "http", &hints, &addr) == 0)
-	{
+	if (getaddrinfo("heapify.org", "http", &hints, &addr) == 0) {
 		showaddrinfo(addr, "heapify.org + http");
 		freeaddrinfo(addr);
 	}
@@ -179,8 +164,7 @@ int main(void)
 	hints.ai_flags  = AI_NUMERICHOST;
 	hints.ai_family = AF_UNSPEC;
 
-	if (getaddrinfo("8.8.8.8", "domain", &hints, &addr) == 0)
-	{
+	if (getaddrinfo("8.8.8.8", "domain", &hints, &addr) == 0) {
 		showaddrinfo(addr, "8.8.8.8 + domain");
 		freeaddrinfo(addr);
 	}

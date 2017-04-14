@@ -4,8 +4,7 @@
 
 /******************************************************************************/
 
-enum app_usage
-{
+enum app_usage {
 	INVALID,
 	ENCODE,
 	DECODE
@@ -36,14 +35,11 @@ void base64_encode(FILE* input, FILE* output)
 	int done, i, ch, chcnt = 0;
 
 	done = 0;
-	while (!done)
-	{
+	while (!done) {
 		data[0] = data[1] = data[2] = '\0';
 
-		for (i = 0; i < 3; i++)
-		{
-			if ((ch = fgetc(input)) == -1)
-			{
+		for (i = 0; i < 3; i++) {
+			if ((ch = fgetc(input)) == -1) {
 				done = 1;
 				break;
 			}
@@ -51,8 +47,7 @@ void base64_encode(FILE* input, FILE* output)
 			data[i] = (unsigned char)ch;
 		}
 
-		if (i > 0)
-		{
+		if (i > 0) {
 			code[0] = BASE64_TABLE[ (data[0] & 0xfc) >> 2];
 			code[1] = BASE64_TABLE[((data[0] & 0x03) << 4) | ((data[1] & 0xf0) >> 4)];
 			code[2] = BASE64_TABLE[((data[1] & 0x0f) << 2) | ((data[2] & 0xc0) >> 6)];
@@ -65,8 +60,7 @@ void base64_encode(FILE* input, FILE* output)
 
 			chcnt += 4;
 
-			if (chcnt >= CHARACTERS_PER_LINE)
-			{
+			if (chcnt >= CHARACTERS_PER_LINE) {
 				putc('\n', output);
 				chcnt = 0;
 			}
@@ -83,14 +77,11 @@ void base64_decode(FILE* input, FILE* output)
 	int done, ch, i, j;
 
 	done = 0;
-	while (!done)
-	{
+	while (!done) {
 		code[0] = code[1] = code[2] = code[3] = 0;
 
-		for (i = 0; i < 4; i++)
-		{
-			if ((ch = fgetc(input)) == -1 || ch == '=')
-			{
+		for (i = 0; i < 4; i++) {
+			if ((ch = fgetc(input)) == -1 || ch == '=') {
 				done = 1;
 				break;
 			}
@@ -109,12 +100,9 @@ void base64_decode(FILE* input, FILE* output)
 				i--;
 		}
 
-		if (i != 4 && i != 0 && ch != '=')
-		{
+		if (i != 4 && i != 0 && ch != '=') {
 			fprintf(stderr, "\nIncomplete input\n");
-		}
-		else if (i != 0)
-		{
+		} else if (i != 0) {
 			data[0] = (unsigned char)(( code[0]         << 2) | ((code[1] & 0x30) >> 4));
 			data[1] = (unsigned char)(((code[1] & 0x0F) << 4) | ((code[2] & 0x3C) >> 2));
 			data[2] = (unsigned char)(((code[2] & 0x03) << 6) |   code[3]);
@@ -140,17 +128,12 @@ int main(int argc, char* argv[])
 	else if (type == INVALID)
 		usage_quit();
 
-	if (strcmp(argv[2], "-") == 0)
-	{
+	if (strcmp(argv[2], "-") == 0) {
 		input = stdin;
-	}
-	else if (!(input = fopen(argv[2], "rb")))
-	{
+	} else if (!(input = fopen(argv[2], "rb"))) {
 		perror(argv[2]);
 		exit(EXIT_FAILURE);
-	}
-	else if (argc == 4 && !(output = fopen(argv[3], "wb")))
-	{
+	} else if (argc == 4 && !(output = fopen(argv[3], "wb"))) {
 		perror(argv[3]);
 		exit(EXIT_FAILURE);
 	}
