@@ -17,7 +17,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 	for (struct addrinfo* curr = addr; curr; curr = curr->ai_next, addr_num++) {
 		printf("addr[%d]:\n", addr_num);
 
-		puts(" flags:"); {
+		puts(" flags:");
+		{
 			if ((curr->ai_flags & AI_PASSIVE) != 0)
 				printf("  AI_PASSIVE\n");
 			if ((curr->ai_flags & AI_CANONNAME) != 0)
@@ -32,7 +33,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  AI_ADDRCONFIG\n");
 		}
 
-		puts(" family:"); {
+		puts(" family:");
+		{
 			const char* family;
 			switch (curr->ai_family) {
 			case AF_INET:
@@ -52,7 +54,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  %s\n", family);
 		}
 
-		puts(" socktype:"); {
+		puts(" socktype:");
+		{
 			const char* type;
 			switch (curr->ai_socktype) {
 			case SOCK_STREAM:
@@ -75,7 +78,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  %s\n", type);
 		}
 
-		puts(" protocol:"); {
+		puts(" protocol:");
+		{
 			const char* protocol;
 			switch (curr->ai_protocol) {
 			case IPPROTO_TCP:
@@ -104,12 +108,14 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  %s\n", protocol);
 		}
 
-		puts(" canonical:"); {
+		puts(" canonical:");
+		{
 			if (curr->ai_canonname)
 				printf("  %s\n", curr->ai_canonname);
 		}
 
-		puts(" addr:"); {
+		puts(" addr:");
+		{
 			switch (curr->ai_family) {
 			case AF_INET: {
 				struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;

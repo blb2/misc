@@ -24,7 +24,6 @@ void usage_quit(void)
 	fprintf(stderr, "\tdecode   Use base64 decoding on file.\n");
 	fprintf(stderr, "\tfile     Specifies the file to be read.  Use '-' for stdin.\n");
 	fprintf(stderr, "\toutput   Specifies output file.\n\n");
-
 	exit(EXIT_FAILURE);
 }
 
