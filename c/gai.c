@@ -117,7 +117,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 		puts(" addr:");
 		{
 			switch (curr->ai_family) {
-			case AF_INET: {
+			case AF_INET:
+			{
 				struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;
 				assert(s->sin_family == curr->ai_family);
 				printf("  family: %d\n", s->sin_family);
@@ -125,7 +126,8 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 				printf("  port: %d\n", ntohs(s->sin_port));
 				break;
 			}
-			case AF_INET6: {
+			case AF_INET6:
+			{
 				struct sockaddr_in6* s = (struct sockaddr_in6*)curr->ai_addr;
 				assert(s->sin6_family == curr->ai_family);
 				printf("  family: %d\n", s->sin6_family);
