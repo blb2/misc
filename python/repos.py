@@ -24,6 +24,11 @@ class Project:
 
 ################################################################################
 
+def remove_prefix(s, prefix):
+    if s.startswith(prefix):
+        return s[len(prefix):]
+    return s
+
 def run(path, cmd, stdout, oneline=False):
     if isinstance(cmd, list):
         args = cmd
@@ -46,9 +51,10 @@ def cmd_get(path, cmd, oneline=False):
     return run(path, cmd, subprocess.PIPE, oneline)
 
 def git_update(path):
-    branch = cmd_get(path, "git symbolic-ref -q --short HEAD", True)
+    branch = cmd_get(path, "git symbolic-ref -q HEAD", True)
     if not branch:
         return
+    branch = remove_prefix(branch, "refs/heads/")
     cmd_run(path, "git fetch --all --prune")
     cmd_run(path, "git merge --ff-only 'origin/{}'".format(branch))
     if os.path.exists(os.path.join(path, ".gitmodules")):
