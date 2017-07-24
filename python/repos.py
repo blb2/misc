@@ -103,7 +103,7 @@ def get_scm_commands():
         "hg"  : SourceControl("hg", ".hg",
                               update="hg pull -u",
                               url="hg showconfig paths.default"),
-        "cvs" : SourceControl("cvs", "CVS",
+        "cvs" : SourceControl("cvs", "CVS/Root",
                               update="cvs update",
                               url=cvs_url),
     }
