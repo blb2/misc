@@ -173,7 +173,7 @@ def apply_url(scm, path):
         return
     url = scm.url(path) if callable(scm.url) else cmd_get(path, scm.url, True)
     if url:
-        print("{:<3} {} {}".format(scm.name, os.path.relpath(path), url))
+        print("{:<3} {} {}".format(scm.name, os.path.relpath(path), url), flush=True)
 
 def update(args, scms):
     apply(os.getcwd(), scms, apply_update)
