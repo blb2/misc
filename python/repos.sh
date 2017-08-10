@@ -6,4 +6,4 @@ else
 	CMD="python3"
 fi
 
-$CMD "$(dirname "$0")/repos.py" "$@"
+$CMD "$(dirname "$(readlink -f "$0")")/repos.py" "$@"
