@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
 	int i;
 
-	for (i = 1; i < argc; i++) {
+	for (i = 1; i != argc; i++) {
 		char* path = realpath(argv[i], NULL);
 		if (path) {
 			printf("%s -> %s\n", argv[i], path);
