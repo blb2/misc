@@ -3,7 +3,7 @@
 //   call "%VCINSTALLDIR%\vcvarsall.bat" x64
 //   cl appname.cpp /EHsc
 // Building with Clang:
-//   TODO
+//   clang++ -std=c++11 -o appname appname.cpp
 // Building with GCC:
 //   g++ -std=c++11 -o appname appname.cpp
 
