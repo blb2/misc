@@ -4,6 +4,7 @@
 //   cl appname.cpp /EHsc
 // Building with Clang:
 //   clang++ -std=c++11 -o appname appname.cpp
+//   clang++ -std=c++11 -o appname appname.cpp -ObjC++ -framework Foundation
 // Building with GCC:
 //   g++ -std=c++11 -o appname appname.cpp
 
@@ -13,6 +14,13 @@
 #include <vector>
 #include <windows.h>
 #elif defined(__APPLE__)
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#else
+#include <cstdint>
+#include <vector>
+#include <mach-o/dyld.h>
+#endif
 #else
 #include <unistd.h>
 #include <limits.h>
@@ -35,7 +43,21 @@ std::string get_path(void)
 static const char s_path_sep = '/';
 std::string get_path(void)
 {
-	return "";
+#ifdef __OBJC__
+	@autoreleasepool {
+		return [[[NSBundle mainBundle] executablePath] cStringUsingEncoding:NSASCIIStringEncoding];
+	}
+#else
+	std::vector<char> pathbuf = { '\0' };
+	uint32_t pathbuf_size = 0;
+
+	if (_NSGetExecutablePath(nullptr, &pathbuf_size) == -1) {
+		pathbuf.resize(pathbuf_size);
+		_NSGetExecutablePath(pathbuf.data(), &pathbuf_size);
+	}
+
+	return pathbuf.data();
+#endif
 }
 #else
 static const char s_path_sep = '/';
@@ -62,10 +84,19 @@ std::string get_path(void)
 }
 #endif
 
+#if defined(__APPLE__) && defined(__OBJC__)
+std::string get_name(const std::string& path)
+{
+	@autoreleasepool {
+		return [[[NSProcessInfo processInfo] processName] cStringUsingEncoding:NSASCIIStringEncoding];
+	}
+}
+#else
 std::string get_name(const std::string& path)
 {
 	return path;
 }
+#endif
 
 int main(void)
 {
