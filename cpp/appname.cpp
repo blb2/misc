@@ -94,7 +94,17 @@ std::string get_name(const std::string& path)
 #else
 std::string get_name(const std::string& path)
 {
-	return path;
+	size_t beg_pos = path.find_last_of(s_path_sep);
+	if (beg_pos == std::string::npos)
+		beg_pos = 0;
+	else
+		beg_pos++;
+
+	size_t end_pos = path.find_last_of('.');
+	if (end_pos == std::string::npos || end_pos < beg_pos)
+		end_pos = path.length();
+
+	return path.substr(beg_pos, end_pos - beg_pos);
 }
 #endif
 
