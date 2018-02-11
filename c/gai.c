@@ -37,17 +37,17 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 		{
 			const char* family;
 			switch (curr->ai_family) {
-			case AF_INET:
-				family = "ipv4";
-				break;
-			case AF_INET6:
-				family = "ipv6";
-				break;
-			case AF_UNIX:
-				family = "unix";
-				break;
-			default:
-				family = NULL;
+				case AF_INET:
+					family = "ipv4";
+					break;
+				case AF_INET6:
+					family = "ipv6";
+					break;
+				case AF_UNIX:
+					family = "unix";
+					break;
+				default:
+					family = NULL;
 			}
 
 			if (family)
@@ -58,20 +58,20 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 		{
 			const char* type;
 			switch (curr->ai_socktype) {
-			case SOCK_STREAM:
-				type = "stream";
-				break;
-			case SOCK_DGRAM:
-				type = "datagram";
-				break;
-			case SOCK_RAW:
-				type = "raw";
-				break;
-			case SOCK_SEQPACKET:
-				type = "seqpacket";
-				break;
-			default:
-				type = NULL;
+				case SOCK_STREAM:
+					type = "stream";
+					break;
+				case SOCK_DGRAM:
+					type = "datagram";
+					break;
+				case SOCK_RAW:
+					type = "raw";
+					break;
+				case SOCK_SEQPACKET:
+					type = "seqpacket";
+					break;
+				default:
+					type = NULL;
 			}
 
 			if (type)
@@ -82,26 +82,26 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 		{
 			const char* protocol;
 			switch (curr->ai_protocol) {
-			case IPPROTO_TCP:
-				protocol = "tcp";
-				break;
-			case IPPROTO_UDP:
-				protocol = "udp";
-				break;
-			case IPPROTO_RAW:
-				protocol = "raw";
-				break;
-			case IPPROTO_IP:
-				protocol = "ip";
-				break;
-			case IPPROTO_IPV6:
-				protocol = "ipv6";
-				break;
-			case IPPROTO_ICMP:
-				protocol = "icmp";
-				break;
-			default:
-				protocol = NULL;
+				case IPPROTO_TCP:
+					protocol = "tcp";
+					break;
+				case IPPROTO_UDP:
+					protocol = "udp";
+					break;
+				case IPPROTO_RAW:
+					protocol = "raw";
+					break;
+				case IPPROTO_IP:
+					protocol = "ip";
+					break;
+				case IPPROTO_IPV6:
+					protocol = "ipv6";
+					break;
+				case IPPROTO_ICMP:
+					protocol = "icmp";
+					break;
+				default:
+					protocol = NULL;
 			}
 
 			if (protocol)
@@ -117,24 +117,22 @@ void showaddrinfo(struct addrinfo* addr, const char* header)
 		puts(" addr:");
 		{
 			switch (curr->ai_family) {
-			case AF_INET:
-			{
-				struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;
-				assert(s->sin_family == curr->ai_family);
-				printf("  family: %d\n", s->sin_family);
-				printf("  addr: %s\n", inet_ntop(s->sin_family, &s->sin_addr, ipv4, sizeof(ipv4)));
-				printf("  port: %d\n", ntohs(s->sin_port));
-				break;
-			}
-			case AF_INET6:
-			{
-				struct sockaddr_in6* s = (struct sockaddr_in6*)curr->ai_addr;
-				assert(s->sin6_family == curr->ai_family);
-				printf("  family: %d\n", s->sin6_family);
-				printf("  addr: %s\n", inet_ntop(s->sin6_family, &s->sin6_addr, ipv6, sizeof(ipv6)));
-				printf("  port: %d\n", ntohs(s->sin6_port));
-				break;
-			}
+				case AF_INET: {
+					struct sockaddr_in* s = (struct sockaddr_in*)curr->ai_addr;
+					assert(s->sin_family == curr->ai_family);
+					printf("  family: %d\n", s->sin_family);
+					printf("  addr: %s\n", inet_ntop(s->sin_family, &s->sin_addr, ipv4, sizeof(ipv4)));
+					printf("  port: %d\n", ntohs(s->sin_port));
+					break;
+				}
+				case AF_INET6: {
+				   struct sockaddr_in6* s = (struct sockaddr_in6*)curr->ai_addr;
+				   assert(s->sin6_family == curr->ai_family);
+				   printf("  family: %d\n", s->sin6_family);
+				   printf("  addr: %s\n", inet_ntop(s->sin6_family, &s->sin6_addr, ipv6, sizeof(ipv6)));
+				   printf("  port: %d\n", ntohs(s->sin6_port));
+				   break;
+				}
 			}
 		}
 
