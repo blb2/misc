@@ -1,6 +1,4 @@
 @echo off
-rem Batch scripting reference:
-rem http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/batch.mspx
 
 set SZ=%PROGRAMFILES%\7-Zip\7z.exe
 set SRC=%APPDATA%\.minecraft\saves
