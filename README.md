@@ -38,5 +38,8 @@ This is to find and remove duplicate files based on file size and MD5 hashes.
 I love to collect source code repositories.  This script just helps me out in
 updating the checkouts/clones.
 
+### [digitalocean-ddns.py](python/digitalocean-ddns.py)
+A script to update a specific domain hosted on DigitalOcean to act as dynamic DNS.
+
 ### [sieve.py](python/sieve.py)
 Just a sieve of Eratosthenes implementation in Python.
