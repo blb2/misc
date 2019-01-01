@@ -14,7 +14,7 @@ DO_NAME    = ""
 DO_TOKEN   = ""
 IPV4_URL   = ""
 IPV6_URL   = ""
-IPV6_ULA   = "fdeb:eeb:e20c::/48"
+IPV6_ULA   = "::/128"
 IPV6_CMD   = "ip -6 addr show dev eth0 scope global primary | grep inet6 | cut -d ' ' -f 6 | cut -d '/' -f 1"
 
 
