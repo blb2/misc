@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from datetime import datetime
 import ipaddress
 import json
 import subprocess
@@ -16,6 +17,14 @@ IPV4_URL   = ""
 IPV6_URL   = ""
 IPV6_ULA   = "::/128"
 IPV6_CMD   = "ip -6 addr show dev eth0 scope global primary | grep inet6 | cut -d ' ' -f 6 | cut -d '/' -f 1"
+
+
+def logmsg(msg):
+    print("[{}] {}".format(datetime.now(), msg))
+
+
+def logerr(err):
+    print("[{}] {}".format(datetime.now(), msg), file=sys.stderr)
 
 
 def get_ip(record_type):
@@ -34,7 +43,7 @@ def get_ip(record_type):
                     except ValueError as e:
                         pass
         except Exception as e:
-            print("Exception attempting to obtain IPv6 address", file=sys.stderr)
+            logerr("Exception attempting to obtain IPv6 address")
         return None
     elif record_type == "A":
         url = IPV4_URL
@@ -50,9 +59,9 @@ def get_ip(record_type):
             if f.status == 200 and "text/plain" in f.getheader("Content-Type", ""):
                 return f.read().decode("utf-8").rstrip()
     except urllib.error.URLError as e:
-        print("Exception while requesting public IP: {}".format(e.reason), file=sys.stderr)
+        logerr("Exception while requesting public IP: {}".format(e.reason))
     except Exception as e:
-        print("Unknown exception while requesting public IP: {}".format(e), file=sys.stderr)
+        logerr("Unknown exception while requesting public IP: {}".format(e))
     return None
 
 
@@ -74,13 +83,13 @@ def get_dns_records(domain, name, token):
                                     records[record["type"]] = record
                         url = doc["links"]["pages"]["next"]
                     except json.JSONDecodeError as e:
-                        print("Exception decoding JSON from DNS records: {}".format(e))
+                        logerr("Exception decoding JSON from DNS records: {}".format(e))
                     except KeyError as e:
                         pass
         except urllib.error.URLError as e:
-            print("Exception while requesting DNS records: {}".format(e.reason), file=sys.stderr)
+            logerr("Exception while requesting DNS records: {}".format(e.reason))
         except Exception as e:
-            print("Unknown exception while requesting DNS records: {}".format(e), file=sys.stderr)
+            logerr("Unknown exception while requesting DNS records: {}".format(e))
     return records
 
 
@@ -92,40 +101,42 @@ def set_dns_record(domain, token, record_id, record_type, record_data):
     try:
         with urllib.request.urlopen(request) as f:
             if f.status == 200 and "application/json" in f.getheader("Content-Type", ""):
-                print("Successfully updated {} record to {}".format(record_type, record_data))
+                logmsg("Successfully updated {} record to {}".format(record_type, record_data))
     except urllib.error.URLError as e:
-        print("Exception while updating {} record: {}".format(record_type, e.reason), file=sys.stderr)
+        logerr("Exception while updating {} record: {}".format(record_type, e.reason))
     except Exception as e:
-        print("Unknown exception while updating {} record: {}".format(record_type, e), file=sys.stderr)
+        logerr("Unknown exception while updating {} record: {}".format(record_type, e))
 
 
 def update_dns_record(domain, token, records, record_type):
     if record_type not in records:
-        print("Could not locate {} record".format(record_type), file=sys.stderr)
+        logerr("Could not locate {} record".format(record_type))
         return
     if "id" not in records[record_type]:
-        print("Could not locate ID in {} record".format(record_type), file=sys.stderr)
+        logerr("Could not locate ID in {} record".format(record_type))
         return
     if "data" not in records[record_type]:
-        print("Could not locate data in {} record".format(record_type), file=sys.stderr)
+        logerr("Could not locate data in {} record".format(record_type))
         return
     ip = get_ip(record_type)
     if not ip:
-        print("Could not get public IP for updating {} record".format(record_type), file=sys.stderr)
+        logerr("Could not get public IP for updating {} record".format(record_type))
         return
     if ip != records[record_type]["data"]:
         set_dns_record(domain, token, records[record_type]["id"], record_type, ip)
     else:
-        print("No IP change detected for {} record with IP {}".format(record_type, ip))
+        logmsg("No IP change detected for {} record with IP {}".format(record_type, ip))
 
 
 def update_dns(domain, name, token):
+    logmsg("Beginning DNS update...")
     records = get_dns_records(domain, name, token)
     if records:
         update_dns_record(domain, token, records, "A")
         update_dns_record(domain, token, records, "AAAA")
     else:
-        print("Could not retrieve domain records for {} ({})".format(domain, name), file=sys.stderr)
+        logerr("Could not retrieve domain records for {} ({})".format(domain, name))
+    logmsg("OK")
 
 
 if __name__ == "__main__":
