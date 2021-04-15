@@ -142,10 +142,11 @@ def apply_cmd(path, scm, cmd):
         cmd(scm, path)
     else:
         method = getattr(scm, cmd)
-        if callable(method):
-            method(path)
-        else:
-            cmd_run(path, method)
+        if method:
+            if callable(method):
+                method(path)
+            else:
+                cmd_run(path, method)
 
 def apply(path, scms, cmd, root=True):
     if root:
