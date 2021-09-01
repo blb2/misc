@@ -58,7 +58,7 @@ def git_update(path):
     cmd_run(path, "git fetch --all --prune")
     cmd_run(path, "git merge --ff-only 'origin/{}'".format(branch))
     if os.path.exists(os.path.join(path, ".gitmodules")):
-        cmd_run(path, "git submodule update --init --recursive")
+        cmd_run(path, "git submodule update --recursive")
 
 def git_clean(path):
     cmd_run(path, "git clean -x -f -d")
