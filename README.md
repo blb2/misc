@@ -56,3 +56,7 @@ updating the checkouts/clones.
 
 ### [sieve.py](python/sieve.py)
 Just a sieve of Eratosthenes implementation in Python.
+
+### [vs-verify-paths.py](python/vs-verify-paths.py)
+Analyze a Visual Studio project and help determine if referenced file paths
+exist or not.
