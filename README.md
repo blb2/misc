@@ -29,6 +29,9 @@ BT.709 recommendation.
 A script to update a specific domain hosted on DigitalOcean to act as dynamic
 DNS.
 
+### [env.pl](perl/env.pl)
+Prints environment variables.
+
 ### [minecraft-backup.bat](batch/minecraft-backup.bat)
 I play Minecraft!  I made this to create backups of my worlds.  This uses 7-Zip
 for archival and compression.  It'll create a directory on the current user's
