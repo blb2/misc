@@ -8,11 +8,12 @@ import xml.etree.ElementTree as etree
 
 
 class SourceControl:
-    def __init__(self, name, path, update=None, clean=None, url=None, available=None):
+    def __init__(self, name, path, update=None, clean=None, gc=None, url=None, available=None):
         self.name = name
         self.path = path
         self.update = update
         self.clean = clean
+        self.gc = gc
         self.url = url
         self.available = available if available is not None else bool(shutil.which(name))
 
@@ -64,21 +65,15 @@ def git_update(path):
         cmd_run(path, "git submodule update --recursive")
 
 
-def git_clean(path):
-    cmd_run(path, "git clean -x -f -d")
-    cmd_run(path, "git gc")
-
-
 def svn_clean(path):
     # http://svn.apache.org/viewvc/subversion/trunk/subversion/svn/schema/status.rnc?view=markup
     svn = cmd_get(path, "svn status --depth empty --xml")
-    if not svn:
-        return
-    root = etree.fromstring(svn)
-    if not root or root.tag != "status":
-        return
-    if root.findall("./target/entry/wc-status/[@wc-locked='true']"):
-        cmd_run(path, "svn cleanup --include-externals")
+    if svn:
+        root = etree.fromstring(svn)
+        if root and root.tag == "status":
+            if root.findall("./target/entry/wc-status/[@wc-locked='true']"):
+                cmd_run(path, "svn cleanup --include-externals")
+    cmd_run(path, "svn cleanup --include-externals --remove-unversioned --remove-ignored")
 
 
 def svn_url(path):
@@ -102,14 +97,16 @@ def cvs_url(path):
 
 
 def get_scm_commands():
-    scms = {
+    return {
         "git" : SourceControl("git", ".git",
                               update=git_update,
-                              clean=git_clean,
+                              clean="git clean -xfd",
+                              gc="git gc",
                               url="git config remote.origin.url"),
         "svn" : SourceControl("svn", ".svn",
                               update="svn update",
                               clean=svn_clean,
+                              gc="svn cleanup --include-externals --vacuum-pristines",
                               url=svn_url),
         "bzr" : SourceControl("bzr", ".bzr",
                               update="bzr update",
@@ -121,7 +118,6 @@ def get_scm_commands():
                               update="cvs update",
                               url=cvs_url),
     }
-    return scms
 
 
 def get_project_scm(path, scms):
@@ -183,6 +179,26 @@ def apply_update(scm, path):
         cmd_run(path, scm.update)
 
 
+def apply_clean(scm, path):
+    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
+    if not scm.clean:
+        return
+    if callable(scm.clean):
+        scm.clean(path)
+    else:
+        cmd_run(path, scm.clean)
+
+
+def apply_gc(scm, path):
+    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
+    if not scm.gc:
+        return
+    if callable(scm.gc):
+        scm.gc(path)
+    else:
+        cmd_run(path, scm.gc)
+
+
 def apply_url(scm, path):
     if not scm.url:
         return
@@ -196,7 +212,11 @@ def update(args, scms):
 
 
 def clean(args, scms):
-    apply(os.getcwd(), scms, "clean")
+    apply(os.getcwd(), scms, apply_clean)
+
+
+def gc(args, scms):
+    apply(os.getcwd(), scms, apply_gc)
 
 
 def urls(args, scms):
@@ -223,6 +243,11 @@ def get_action(argv):
     parser_clean.set_defaults(call=clean)
     parser_clean.add_argument("-t", "--type", dest="types", action="append", metavar="type", help="repository type")
 
+    desc = "garbage collect repositories"
+    parser_gc = subparser.add_parser("gc", help=desc, description=desc)
+    parser_gc.set_defaults(call=gc)
+    parser_gc.add_argument("-t", "--type", dest="types", action="append", metavar="type", help="repository type")
+
     desc = "show URLs for each repository"
     parser_urls = subparser.add_parser("urls", help=desc, description=desc)
     parser_urls.set_defaults(call=urls)
@@ -244,6 +269,7 @@ def get_action(argv):
     parsers = {
         "update" : parser_update,
         "clean"  : parser_clean,
+        "gc"     : parser_gc,
         "urls"   : parser_urls,
         "types"  : parser_types,
     }
