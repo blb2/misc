@@ -104,7 +104,7 @@ def get_scm_commands():
                               clean="git clean -xfd",
                               gc="git gc",
                               url="git config remote.origin.url",
-                              status="git status"),
+                              status="git status -s"),
         "svn" : SourceControl("svn", ".svn",
                               update="svn update",
                               clean=svn_clean,
