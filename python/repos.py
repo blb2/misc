@@ -8,13 +8,14 @@ import xml.etree.ElementTree as etree
 
 
 class SourceControl:
-    def __init__(self, name, path, update=None, clean=None, gc=None, url=None, available=None):
+    def __init__(self, name, path, update=None, clean=None, gc=None, url=None, status=None, available=None):
         self.name = name
         self.path = path
         self.update = update
         self.clean = clean
         self.gc = gc
         self.url = url
+        self.status = status
         self.available = available if available is not None else bool(shutil.which(name))
 
 
@@ -102,12 +103,14 @@ def get_scm_commands():
                               update=git_update,
                               clean="git clean -xfd",
                               gc="git gc",
-                              url="git config remote.origin.url"),
+                              url="git config remote.origin.url",
+                              status="git status"),
         "svn" : SourceControl("svn", ".svn",
                               update="svn update",
                               clean=svn_clean,
                               gc="svn cleanup --include-externals --vacuum-pristines",
-                              url=svn_url),
+                              url=svn_url,
+                              status="svn status -q"),
         "bzr" : SourceControl("bzr", ".bzr",
                               update="bzr update",
                               url="bzr config bound_location"),
@@ -179,6 +182,16 @@ def apply_update(scm, path):
         cmd_run(path, scm.update)
 
 
+def apply_status(scm, path):
+    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
+    if not scm.status:
+        return
+    if callable(scm.status):
+        scm.status(path)
+    else:
+        cmd_run(path, scm.status)
+
+
 def apply_clean(scm, path):
     print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
     if not scm.clean:
@@ -211,6 +224,10 @@ def update(args, scms):
     apply(os.getcwd(), scms, apply_update)
 
 
+def status(args, scms):
+    apply(os.getcwd(), scms, apply_status)
+
+
 def clean(args, scms):
     apply(os.getcwd(), scms, apply_clean)
 
@@ -237,6 +254,11 @@ def get_action(argv):
     parser_update = subparser.add_parser("update", help=desc, description=desc)
     parser_update.set_defaults(call=update)
     parser_update.add_argument("-t", "--type", dest="types", action="append", metavar="type", help="repository type")
+
+    desc = "retrieve status of each repository"
+    parser_status = subparser.add_parser("status", help=desc, description=desc)
+    parser_status.set_defaults(call=status)
+    parser_status.add_argument("-t", "--type", dest="types", action="append", metavar="type", help="repository type")
 
     desc = "clean repositories"
     parser_clean = subparser.add_parser("clean", help=desc, description=desc)
@@ -268,6 +290,7 @@ def get_action(argv):
 
     parsers = {
         "update" : parser_update,
+        "status" : parser_status,
         "clean"  : parser_clean,
         "gc"     : parser_gc,
         "urls"   : parser_urls,
