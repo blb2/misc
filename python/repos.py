@@ -25,7 +25,7 @@ class Project:
         self.scm = scm
 
 
-def remove_prefix(s, prefix):
+def del_prefix(s, prefix):
     if s.startswith(prefix):
         return s[len(prefix):]
     return s
@@ -59,7 +59,7 @@ def git_update(path):
     branch = cmd_get(path, "git symbolic-ref -q HEAD", True)
     if not branch:
         return
-    branch = remove_prefix(branch, "refs/heads/")
+    branch = del_prefix(branch, "refs/heads/")
     cmd_run(path, f"git fetch --all --prune")
     cmd_run(path, f"git merge --ff-only 'origin/{branch}'")
     if os.path.exists(os.path.join(path, ".gitmodules")):
@@ -123,7 +123,7 @@ def get_scm_commands():
     }
 
 
-def get_project_scm(path, scms):
+def get_proj_scm(path, scms):
     for scm in scms.values():
         if os.path.exists(os.path.join(path, scm.path)):
             return scm
@@ -132,84 +132,50 @@ def get_project_scm(path, scms):
 
 def get_dirs(path, scms):
     repos = []
-    projects = []
+    projs = []
     for e in os.scandir(path):
         if e.is_dir():
             fullpath = os.path.join(path, e.name)
             if e.name.startswith("repos-"):
                 repos.append(fullpath)
             else:
-                scm = get_project_scm(fullpath, scms)
+                scm = get_proj_scm(fullpath, scms)
                 if scm:
-                    projects.append(Project(fullpath, scm))
-    return repos, projects
+                    projs.append(Project(fullpath, scm))
+    return repos, projs
 
 
-def apply_cmd(path, scm, cmd):
+def apply_cmd(path, scm, cmd, show_proj):
     if not scm.available:
         return
     if callable(cmd):
+        show_proj(path, scm)
         cmd(scm, path)
     else:
         method = getattr(scm, cmd)
         if method:
+            show_proj(path, scm)
             if callable(method):
                 method(path)
             else:
                 cmd_run(path, method)
 
 
-def apply(path, scms, cmd, root=True):
+def show_proj_default(path, scm):
+    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
+
+
+def apply(path, scms, cmd, root=True, show_proj=show_proj_default):
     if root:
-        scm = get_project_scm(path, scms)
+        scm = get_proj_scm(path, scms)
         if scm:
-            apply_cmd(path, scm, cmd)
+            apply_cmd(path, scm, cmd, show_proj)
             return
-    repos, projects = get_dirs(path, scms) 
-    for project in projects:
-        apply_cmd(project.path, project.scm, cmd)
+    repos, projs = get_dirs(path, scms) 
+    for proj in projs:
+        apply_cmd(proj.path, proj.scm, cmd, show_proj)
     for repo in repos:
-        apply(repo, scms, cmd, False)
-
-
-def apply_update(scm, path):
-    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
-    if not scm.update:
-        return
-    if callable(scm.update):
-        scm.update(path)
-    else:
-        cmd_run(path, scm.update)
-
-
-def apply_status(scm, path):
-    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
-    if not scm.status:
-        return
-    if callable(scm.status):
-        scm.status(path)
-    else:
-        cmd_run(path, scm.status)
-
-
-def apply_clean(scm, path):
-    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
-    if not scm.clean:
-        return
-    if callable(scm.clean):
-        scm.clean(path)
-    else:
-        cmd_run(path, scm.clean)
-
-
-def apply_gc(scm, path):
-    print(f"{scm.name:<3} {os.path.relpath(path)} ...", flush=True)
-    if not scm.gc:
-        return
-    if callable(scm.gc):
-        scm.gc(path)
-    else:
-        cmd_run(path, scm.gc)
+        apply(repo, scms, cmd, False, show_proj)
 
 
 def apply_url(scm, path):
@@ -221,23 +187,23 @@ def apply_url(scm, path):
 
 
 def update(args, scms):
-    apply(os.getcwd(), scms, apply_update)
+    apply(os.getcwd(), scms, "update")
 
 
 def status(args, scms):
-    apply(os.getcwd(), scms, apply_status)
+    apply(os.getcwd(), scms, "status")
 
 
 def clean(args, scms):
-    apply(os.getcwd(), scms, apply_clean)
+    apply(os.getcwd(), scms, "clean")
 
 
 def gc(args, scms):
-    apply(os.getcwd(), scms, apply_gc)
+    apply(os.getcwd(), scms, "gc")
 
 
 def urls(args, scms):
-    apply(os.getcwd(), scms, apply_url)
+    apply(os.getcwd(), scms, apply_url, show_proj=lambda *args: None)
 
 
 def types(args, scms):
