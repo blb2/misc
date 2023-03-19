@@ -24,7 +24,7 @@ def logmsg(msg):
 
 
 def logerr(err):
-    print("[{datetime.now()}] {msg}", file=sys.stderr)
+    print(f"[{datetime.now()}] {msg}", file=sys.stderr)
 
 
 def get_ip(record_type):
