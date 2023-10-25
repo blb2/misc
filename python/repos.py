@@ -136,12 +136,12 @@ def get_dirs(path, scms):
     for e in os.scandir(path):
         if e.is_dir():
             fullpath = os.path.join(path, e.name)
-            if e.name.startswith("repos-"):
-                repos.append(fullpath)
+            scm = get_proj_scm(fullpath, scms)
+            if scm:
+                projs.append(Project(fullpath, scm))
             else:
-                scm = get_proj_scm(fullpath, scms)
-                if scm:
-                    projs.append(Project(fullpath, scm))
+                repos.append(fullpath)
+
     return repos, projs
 
 
