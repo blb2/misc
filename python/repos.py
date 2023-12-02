@@ -70,10 +70,13 @@ def svn_clean(path):
     # http://svn.apache.org/viewvc/subversion/trunk/subversion/svn/schema/status.rnc?view=markup
     svn = cmd_get(path, "svn status --depth empty --xml")
     if svn:
-        root = etree.fromstring(svn)
-        if root is not None and root.tag == "status":
-            if root.findall("./target/entry/wc-status/[@wc-locked='true']"):
-                cmd_run(path, "svn cleanup --include-externals")
+        try:
+            root = etree.fromstring(svn)
+            if root.tag == "status":
+                if root.findall("./target/entry/wc-status/[@wc-locked='true']"):
+                    cmd_run(path, "svn cleanup --include-externals")
+        except:
+            pass
     cmd_run(path, "svn cleanup --include-externals --remove-unversioned --remove-ignored")
 
 
@@ -82,18 +85,21 @@ def svn_url(path):
     svn = cmd_get(path, "svn info --xml")
     if not svn:
         return None
-    root = etree.fromstring(svn)
-    if not root or root.tag != "info":
+    try:
+        root = etree.fromstring(svn)
+        if root.tag != "info":
+            return None
+        info = root.findall("./entry/url")
+        return info[0].text if info else None
+    except:
         return None
-    info = root.findall("./entry/url")
-    return info[0].text if info else None
 
 
 def cvs_url(path):
     try:
         with open(os.path.join(path, "CVS/Root")) as f:
             return f.readline().split('\n', 1)[0]
-    except Exception as e:
+    except:
         return None
 
 
