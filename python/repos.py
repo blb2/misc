@@ -71,7 +71,7 @@ def svn_clean(path):
     svn = cmd_get(path, "svn status --depth empty --xml")
     if svn:
         root = etree.fromstring(svn)
-        if root and root.tag == "status":
+        if root is not None and root.tag == "status":
             if root.findall("./target/entry/wc-status/[@wc-locked='true']"):
                 cmd_run(path, "svn cleanup --include-externals")
     cmd_run(path, "svn cleanup --include-externals --remove-unversioned --remove-ignored")
