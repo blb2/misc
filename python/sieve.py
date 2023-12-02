@@ -1,7 +1,7 @@
 from math import sqrt
 
 n = 49
-sieve = [ True ] * n
+sieve = [True] * n
 
 print ">>", int(sqrt(n))
 

@@ -2,31 +2,31 @@
 
 # Windows XP CMD normal colors
 ansi_dark = [
-    [   0,   0,   0 ], # black
-    [ 128,   0,   0 ], # red
-    [   0, 128,   0 ], # green
-    [ 128, 128,   0 ], # brown/yellow
-    [   0,   0, 128 ], # blue
-    [ 128,   0, 128 ], # magenta
-    [   0, 128, 128 ], # cyan
-    [ 192, 192, 192 ], # gray
+    [  0,   0,   0], # black
+    [128,   0,   0], # red
+    [  0, 128,   0], # green
+    [128, 128,   0], # brown/yellow
+    [  0,   0, 128], # blue
+    [128,   0, 128], # magenta
+    [  0, 128, 128], # cyan
+    [192, 192, 192], # gray
 ]
 
 # Windows XP CMD light colors
 ansi_light = [
-    [  85,  85,  85 ], # dark gray
-    [ 255,  85,  85 ], # red
-    [  85, 255,  85 ], # green
-    [ 255, 255,  85 ], # yellow
-    [  85,  85, 255 ], # blue
-    [ 255,  85, 255 ], # magenta
-    [  85, 255, 255 ], # cyan
-    [ 255, 255, 255 ], # white
+    [ 85,  85,  85], # dark gray
+    [255,  85,  85], # red
+    [ 85, 255,  85], # green
+    [255, 255,  85], # yellow
+    [ 85,  85, 255], # blue
+    [255,  85, 255], # magenta
+    [ 85, 255, 255], # cyan
+    [255, 255, 255], # white
 ]
 
 # Miscellaneous colors
 misc = [
-    [ 0, 0, 255 ],
+    [0, 0, 255],
 ]
 
 
@@ -45,7 +45,8 @@ def convert_colors(label, colors):
     print(label)
     for r, g, b in colors:
         y, u, v = yuv(r, g, b)
-        print("0x%-8s : %3d %3d %3d %3d" % (format((y << 24) | (v << 16) | (y << 8) | u, 'x'), u, y, v, y))
+        uyvy = (y << 24) | (v << 16) | (y << 8) | u
+        print(f"0x{uyvy:08x} : {u:3} {y:3} {v:3} {y:3}")
 
 
 if __name__ == "__main__":

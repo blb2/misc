@@ -10,13 +10,13 @@ import urllib.request
 
 
 # DigitalOcean API v2: https://docs.digitalocean.com/reference/api/api-reference/
-DO_DOMAIN  = ""
-DO_NAME    = ""
-DO_TOKEN   = ""
-IPV4_URL   = ""
-IPV6_URL   = ""
-IPV6_ULA   = "::/128"
-IPV6_CMD   = "ip -6 addr show dev eth0 scope global primary | fgrep inet6 | cut -d ' ' -f 6 | cut -d '/' -f 1"
+DO_DOMAIN = ""
+DO_NAME   = ""
+DO_TOKEN  = ""
+IPV4_URL  = ""
+IPV6_URL  = ""
+IPV6_ULA  = "::/128"
+IPV6_CMD  = "ip -6 addr show dev eth0 scope global primary | fgrep inet6 | cut -d ' ' -f 6 | cut -d '/' -f 1"
 
 
 def logmsg(msg):
@@ -67,7 +67,7 @@ def get_ip(record_type):
 
 def get_dns_records(domain, name, token):
     url     = f"https://api.digitalocean.com/v2/domains/{domain}/records?per_page=200"
-    headers = { "Content-Type": "application/json", "Authorization": f"Bearer {token}" }
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     records = {}
     while url:
         request = urllib.request.Request(url=url, headers=headers, method="GET")
@@ -95,8 +95,8 @@ def get_dns_records(domain, name, token):
 
 def set_dns_record(domain, token, record_id, record_type, record_data):
     url     = f"https://api.digitalocean.com/v2/domains/{domain}/records/{record_id}"
-    headers = { "Content-Type": "application/json", "Authorization": f"Bearer {token}" }
-    data    = json.JSONEncoder().encode({ "data": record_data }).encode("utf-8")
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    data    = json.JSONEncoder().encode({"data": record_data}).encode("utf-8")
     request = urllib.request.Request(url=url, headers=headers, data=data, method="PUT")
     try:
         with urllib.request.urlopen(request) as f:

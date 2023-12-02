@@ -34,7 +34,7 @@ def del_prefix(s, prefix):
 def run(path, cmd, stdout, oneline=False):
     if isinstance(cmd, list):
         args = cmd
-        cmd = " ".join([ shlex.quote(s) for s in cmd ])
+        cmd = " ".join([shlex.quote(s) for s in cmd])
     else:
         args = shlex.split(cmd)
     try:
@@ -99,27 +99,37 @@ def cvs_url(path):
 
 def get_scm_commands():
     return {
-        "git" : SourceControl("git", ".git",
-                              update=git_update,
-                              clean="git clean -xfd",
-                              gc="git gc",
-                              url="git config remote.origin.url",
-                              status="git status"),
-        "svn" : SourceControl("svn", ".svn",
-                              update="svn update",
-                              clean=svn_clean,
-                              gc="svn cleanup --include-externals --vacuum-pristines",
-                              url=svn_url,
-                              status="svn status -q"),
-        "bzr" : SourceControl("bzr", ".bzr",
-                              update="bzr update",
-                              url="bzr config bound_location"),
-        "hg"  : SourceControl("hg", ".hg",
-                              update="hg pull -u",
-                              url="hg showconfig paths.default"),
-        "cvs" : SourceControl("cvs", "CVS/Root",
-                              update="cvs update",
-                              url=cvs_url),
+        "git" : SourceControl(
+            "git", ".git",
+            update=git_update,
+            clean="git clean -xfd",
+            gc="git gc",
+            url="git config remote.origin.url",
+            status="git status"
+        ),
+        "svn" : SourceControl(
+            "svn", ".svn",
+            update="svn update",
+            clean=svn_clean,
+            gc="svn cleanup --include-externals --vacuum-pristines",
+            url=svn_url,
+            status="svn status -q"
+        ),
+        "bzr" : SourceControl(
+            "bzr", ".bzr",
+            update="bzr update",
+            url="bzr config bound_location"
+        ),
+        "hg"  : SourceControl(
+            "hg", ".hg",
+            update="hg pull -u",
+            url="hg showconfig paths.default"
+        ),
+        "cvs" : SourceControl(
+            "cvs", "CVS/Root",
+            update="cvs update",
+            url=cvs_url
+        ),
     }
 
 

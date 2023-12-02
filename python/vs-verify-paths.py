@@ -6,7 +6,7 @@ import xml.etree.ElementTree
 
 
 xmlns = "{http://schemas.microsoft.com/developer/msbuild/2003}"
-elements = { "ClInclude", "ProjectReference", "Page", "Compile", "Resource", "EmbeddedResource", "None" }
+elements = {"ClInclude", "ProjectReference", "Page", "Compile", "Resource", "EmbeddedResource", "None"}
 
 
 def verify_path(dirname, relpath):
