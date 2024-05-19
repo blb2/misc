@@ -38,7 +38,7 @@ def yuv(r, g, b):
     y = clamp(0, 255, int( 0.183 * r + 0.614 * g + 0.062 * b +  16.0))
     u = clamp(0, 255, int(-0.101 * r - 0.338 * g + 0.439 * b + 128.0))
     v = clamp(0, 255, int( 0.439 * r - 0.399 * g - 0.040 * b + 128.0))
-    return [ y, u, v ]
+    return [y, u, v]
 
 
 def convert_colors(label, colors):
