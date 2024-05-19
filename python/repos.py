@@ -129,7 +129,9 @@ def get_scm_commands():
         "hg"  : SourceControl(
             "hg", ".hg",
             update="hg pull -u",
-            url="hg showconfig paths.default"
+            clean="hg purge --all --config extensions.purge=",
+            url="hg showconfig paths.default",
+            status="hg status"
         ),
         "cvs" : SourceControl(
             "cvs", "CVS/Root",
