@@ -2,22 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/******************************************************************************/
-
 enum app_usage {
 	INVALID,
 	ENCODE,
 	DECODE
 };
 
-/******************************************************************************/
-
 static const int CHARACTERS_PER_LINE = 72;
 static const char BASE64_TABLE[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-/******************************************************************************/
-
-void usage_quit(void)
+static void usage_quit(void)
 {
 	fprintf(stderr, "Usage:\tbase64 <encode|decode> file [output]\n\n");
 	fprintf(stderr, "\tencode   Use base64 encoding on file.\n");
@@ -27,7 +21,7 @@ void usage_quit(void)
 	exit(EXIT_FAILURE);
 }
 
-void base64_encode(FILE* input, FILE* output)
+static void base64_encode(FILE* input, FILE* output)
 {
 	unsigned char data[3];
 	unsigned char code[4];
@@ -69,7 +63,7 @@ void base64_encode(FILE* input, FILE* output)
 	putc('\n', output);
 }
 
-void base64_decode(FILE* input, FILE* output)
+static void base64_decode(FILE* input, FILE* output)
 {
 	unsigned char data[3];
 	unsigned int  code[4];
@@ -150,5 +144,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-
-/******************************************************************************/

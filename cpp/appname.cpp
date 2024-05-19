@@ -48,7 +48,7 @@ std::string get_path(void)
 		return [[[NSBundle mainBundle] executablePath] cStringUsingEncoding:NSASCIIStringEncoding];
 	}
 #else
-	std::vector<char> pathbuf = { '\0' };
+	std::vector<char> pathbuf = {'\0'};
 	uint32_t pathbuf_size = 0;
 
 	if (_NSGetExecutablePath(nullptr, &pathbuf_size) == -1) {

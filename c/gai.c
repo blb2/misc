@@ -7,9 +7,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-char ipv4[INET_ADDRSTRLEN], ipv6[INET6_ADDRSTRLEN];
+static char ipv4[INET_ADDRSTRLEN], ipv6[INET6_ADDRSTRLEN];
 
-void showaddrinfo(struct addrinfo* addr, const char* header)
+static void showaddrinfo(struct addrinfo* addr, const char* header)
 {
 	puts(header);
 
