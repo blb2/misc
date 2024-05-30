@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# At the end of bashrc:
+# start ssh agent if necessary
+# if [ -r ~/.bashrc_ssh ]; then
+#    . ~/.bashrc_ssh
+# fi
+
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_ssh_agent {
+    echo "initializing new ssh-agent..."
+    ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
+    echo succeeded
+    chmod 0600 "$SSH_ENV"
+    . "$SSH_ENV" > /dev/null
+    ssh-add
+}
+
+function test_ssh_id {
+    ssh-add -l | grep "The agent has no identities" > /dev/null
+    if [ $? -eq 0 ]; then
+        ssh-add
+        if [ $? -eq 2 ]; then
+            start_ssh_agent
+        fi
+    fi
+}
+
+if [ -n "$SSH_AGENT_PID" ]; then
+    ps -ef | grep "$SSH_AGENT_PID" | grep ssh-agent > /dev/null
+
+    if [ $? -eq 0 ]; then
+        test_ssh_id
+    fi
+else
+    if [ -f "$SSH_ENV" ]; then
+        . "$SSH_ENV" > /dev/null
+    fi
+
+    ps -ef | grep "$SSH_AGENT_PID" | grep -v grep | grep ssh-agent > /dev/null
+
+    if [ $? -eq 0 ]; then
+        test_ssh_id
+    else
+        start_ssh_agent
+    fi
+fi
