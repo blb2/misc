@@ -48,8 +48,9 @@ static void base64_encode(FILE* input, FILE* output)
 
 			memset(code + i + 1, '=', 3 - i);
 
-			for (i = 0; i < 4; i++)
+			for (i = 0; i < 4; i++) {
 				putc(code[i], output);
+			}
 
 			chcnt += 4;
 
@@ -79,18 +80,19 @@ static void base64_decode(FILE* input, FILE* output)
 				break;
 			}
 
-			if ('A' <= ch && ch <= 'Z')
+			if ('A' <= ch && ch <= 'Z') {
 				code[i] = ch - 'A';
-			else if ('a' <= ch && ch <= 'z')
+			} else if ('a' <= ch && ch <= 'z') {
 				code[i] = ch - 'a' + ('Z' - 'A' + 1);
-			else if ('0' <= ch && ch <= '9')
+			} else if ('0' <= ch && ch <= '9') {
 				code[i] = ch - '0' + ('Z' - 'A' + 1) + ('z' - 'a' + 1);
-			else if (ch == '+')
+			} else if (ch == '+') {
 				code[i] = 62;
-			else if (ch == '/')
+			} else if (ch == '/') {
 				code[i] = 63;
-			else
+			} else {
 				i--;
+			}
 		}
 
 		if (i != 4 && i != 0 && ch != '=') {
@@ -100,8 +102,9 @@ static void base64_decode(FILE* input, FILE* output)
 			data[1] = (unsigned char)(((code[1] & 0x0F) << 4) | ((code[2] & 0x3C) >> 2));
 			data[2] = (unsigned char)(((code[2] & 0x03) << 6) |   code[3]);
 
-			for (j = 0; j < i - 1; j++)
+			for (j = 0; j < i - 1; j++) {
 				putc(data[j], output);
+			}
 		}
 	}
 }
@@ -112,14 +115,15 @@ int main(int argc, char* argv[])
 	FILE* output = stdout;
 	FILE* input = NULL;
 
-	if (argc != 3 && argc != 4)
+	if (argc != 3 && argc != 4) {
 		usage_quit();
-	else if (strcmp("encode", argv[1]) == 0)
+	} else if (strcmp("encode", argv[1]) == 0) {
 		type = ENCODE;
-	else if (strcmp("decode", argv[1]) == 0)
+	} else if (strcmp("decode", argv[1]) == 0) {
 		type = DECODE;
-	else if (type == INVALID)
+	} else if (type == INVALID) {
 		usage_quit();
+	}
 
 	if (strcmp(argv[2], "-") == 0) {
 		input = stdin;
@@ -131,16 +135,19 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	if (type == ENCODE)
+	if (type == ENCODE) {
 		base64_encode(input, output);
-	else if (type == DECODE)
+	} else if (type == DECODE) {
 		base64_decode(input, output);
+	}
 
-	if (input != stdin)
+	if (input != stdin) {
 		fclose(input);
+	}
 
-	if (output != stdout)
+	if (output != stdout) {
 		fclose(output);
+	}
 
 	return 0;
 }
