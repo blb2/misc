@@ -23,8 +23,9 @@ int main(void)
 
 				strncpy(req.ifr_name, p_ifs[i].if_name, IFNAMSIZ);
 
-				if (ioctl(s, SIOCGIFADDR, &req) >= 0)
+				if (ioctl(s, SIOCGIFADDR, &req) >= 0) {
 					inet_ntop(AF_INET, &((struct sockaddr_in*)&req.ifr_addr)->sin_addr, ip, INET_ADDRSTRLEN);
+				}
 
 				printf("i=%d idx=%d name=%s ip=%s\n", i, p_ifs[i].if_index, p_ifs[i].if_name, ip);
 			}

@@ -10,8 +10,9 @@ int main(void)
 		int sndbuf = 0;
 		socklen_t sndbuf_size = sizeof(sndbuf);
 
-		if (getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sndbuf, &sndbuf_size) >= 0)
+		if (getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sndbuf, &sndbuf_size) >= 0) {
 			printf("sndbuf: %d\n", sndbuf);
+		}
 
 		close(s);
 	}
