@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$OSTYPE" = "msys" ]; then
+if [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "cygwin" ]; then
 	CMD="py -3"
 else
 	CMD="python3"
