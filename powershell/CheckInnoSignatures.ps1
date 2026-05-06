@@ -53,9 +53,9 @@ function Verify-AllSignatures {
 }
 
 if ([string]::IsNullOrEmpty($InnoExtractPath)) {
-    $InnoExtractPath = Join-Path -Path (Get-ScriptDirectory) -ChildPath "innoextract.exe"
+    $InnoExtractPath = Join-Path -Path "." -ChildPath "innoextract.exe"
     if (-Not (Test-Path -Path $InnoExtractPath -PathType Leaf)) {
-        $InnoExtractPath = Join-Path -Path "." -ChildPath "innoextract.exe"
+        $InnoExtractPath = Join-Path -Path (Get-ScriptDirectory) -ChildPath "innoextract.exe"
     }
 } elseif (Test-Path -Path $InnoExtractPath -PathType Container) {
     $InnoExtractPath = Join-Path -Path $InnoExtractPath -ChildPath "innoextract.exe"
